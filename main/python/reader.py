@@ -1,23 +1,24 @@
 from main.python.model import Instruction
 
 
-class GcodeReader:
-    def __init__(self):
+class GCodeReader:
+    def __init__(self, path_to_gcode):
         self.highest_x = 0
         self.highest_y = 0
         self.lowest_x = 0
         self.lowest_y = 0
+        self.__path_to_gcode = path_to_gcode
 
-    def read(self, path_to_gcode):
+    def read(self):
         instructions = []
-        with open(path_to_gcode, "r") as fp:
+        with open(self.__path_to_gcode, "r") as fp:
             for line in fp:
                 instruction = Instruction(line)
                 instructions.append(instruction)
-                self.look_for_extremes(instruction)
+                self.detect_and_store_extremes(instruction)
         return instructions
 
-    def look_for_extremes(self, instruction):
+    def detect_and_store_extremes(self, instruction):
         if instruction.x is not None:
             if instruction.x < self.lowest_x:
                 self.lowest_x = instruction.y
